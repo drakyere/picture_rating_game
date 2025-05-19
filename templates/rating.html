@@ -91,7 +91,7 @@
 
     <div class="rating-scale">
         <p><strong>Rating Scale:</strong></p>
-        <p>1 (Not at all beautiful) to 7 (Extremely beautiful)</p>
+        <p>1 (Not at all beautiful) to 5 (Extremely beautiful)</p>
     </div>
 
     {% if not images %}
@@ -109,12 +109,10 @@
                 <select name="rating_{{ image }}" id="rating_{{ image }}" required>
                     <option value="" disabled selected>Select rating</option>
                     <option value="1">1 - Not beautiful</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4 - Neutral</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7 - Extremely beautiful</option>
+                    <option value="2">2 - Slightly Beautiful</option>
+                    <option value="4">3 - Neither Beautiful nor uglyl</option>
+                    <option value="5">4 - Beautiful</option>
+                    <option value="7">5 - Extremely beautiful</option>
                 </select>
             </div>
             {% endfor %}
