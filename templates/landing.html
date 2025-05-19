@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beautiful Images Ratin Game</title>
+    <title>Beautiful Images Rating Game</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -99,9 +99,9 @@
     <div class="container">
         <h1>Beautiful Images Rating Game</h1>
         <p class="description">
-            Welcome to our aesthetic research study! We're exploring how people perceive beauty in images. 
+            Welcome to our aesthetic research study! We're exploring how people of different age ranges perceive beauty in images. 
             You'll be shown a series of images to rate based on your personal preferences. 
-            The entire process should take about 5 minutes.
+            The entire process should take about 1 minute.
         </p>
         
         <div class="demographic-form">
@@ -109,7 +109,7 @@
             <form action="{{ url_for('demographic') }}" method="POST">
                 <div class="form-group">
                     <label for="age">Your Age:</label>
-                    <input type="number" id="age" name="age" min="13" max="120" required>
+                    <input type="number" id="age" name="age" min="13" max="99" required>
                 </div>
                 
                 <div class="form-group">
@@ -118,7 +118,6 @@
                         <option value="">Select your gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
-                        <option value="non-binary">Non-binary</option>
                         <option value="other">Other</option>
                         <option value="prefer-not">Prefer not to say</option>
                     </select>
