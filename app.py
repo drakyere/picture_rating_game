@@ -1,15 +1,20 @@
-import webbrowser
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask_sqlalchemy import SQLAlchemy
 import os
 import random
+import logging
 from pathlib import Path
+from datetime import datetime
+import webbrowser
+
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from prometheus_flask_exporter import PrometheusMetrics
 import pandas as pd
-import sqlite3
-from datetime import datetime
-import logging
+import sqlite3  # Kept for local dev fallback
+
+# ================================================
+# INITIALIZATION
+# ================================================
 
 # Initialize logging
 logging.basicConfig(
@@ -34,6 +39,10 @@ def load_environment():
 
 load_environment()
 
+# ================================================
+# APP CONFIGURATION
+# ================================================
+
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.secret_key = os.environ['SECRET_KEY']
 
@@ -44,6 +53,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 metrics = PrometheusMetrics(app)
+
+# ================================================
+# DATABASE MODELS
+# ================================================
 
 class Feedback(db.Model):
     __tablename__ = 'feedback'
@@ -59,15 +72,42 @@ class Stats(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     visitors = db.Column(db.Integer, default=0)
 
-# Initialize database
-with app.app_context():
-    db.create_all()
-    
-    # Initialize visitor counter if it doesn't exist
-    if not Stats.query.first():
-        db.session.add(Stats(visitors=0))
-        db.session.commit()
-        logger.info("Initialized visitor counter")
+# ================================================
+# HELPER FUNCTIONS
+# ================================================
+
+def init_database():
+    """Initialize database tables"""
+    with app.app_context():
+        db.create_all()
+        
+        # Initialize visitor counter if it doesn't exist
+        if not Stats.query.first():
+            db.session.add(Stats(visitors=0))
+            db.session.commit()
+            logger.info("Initialized visitor counter")
+
+def export_data():
+    """Export feedback data to CSV"""
+    with app.app_context():
+        try:
+            df = pd.read_sql_query("SELECT * FROM feedback", db.engine)
+            csv_path = os.path.join(BASE_DIR, 'feedback_data.csv')
+            df.to_csv(csv_path, index=False)
+            logger.info(f"Data exported to {csv_path}")
+            
+            # Optional browser display
+            html = df.to_html()
+            temp_html = os.path.join(BASE_DIR, 'temp.html')
+            with open(temp_html, 'w') as f:
+                f.write(html)
+            webbrowser.open(temp_html)
+        except Exception as e:
+            logger.error(f"Export failed: {str(e)}")
+
+# ================================================
+# ROUTES
+# ================================================
 
 @app.route('/')
 def index():
@@ -158,7 +198,6 @@ def view_data():
     feedback = Feedback.query.all()
     return render_template('view_data.html', feedback=feedback)
 
-# Visitor counter
 @app.before_request
 def count_visitors():
     if request.path == '/ping':
@@ -172,42 +211,35 @@ def count_visitors():
             session['visited'] = True
             logger.info(f"New visitor - Total: {stats.visitors}")
 
-# Health check
 @app.route('/ping')
 def ping():
     return "OK", 200
 
-def export_data():
-    with app.app_context():
-        try:
-            df = pd.read_sql_query("SELECT * FROM feedback", db.engine)
-            csv_path = os.path.join(BASE_DIR, 'feedback_data.csv')
-            df.to_csv(csv_path, index=False)
-            logger.info(f"Data exported to {csv_path}")
-            
-            # Optional browser display
-            html = df.to_html()
-            temp_html = os.path.join(BASE_DIR, 'temp.html')
-            with open(temp_html, 'w') as f:
-                f.write(html)
-            webbrowser.open(temp_html)
-        except Exception as e:
-            logger.error(f"Export failed: {str(e)}")
+# ================================================
+# STARTUP
+# ================================================
 
 if __name__ == '__main__':
-    try:
-        if os.environ.get('FLASK_ENV') == 'production':
-            from waitress import serve
-            logger.info("Starting production server")
-            serve(
-                app,
-                host='0.0.0.0',
-                port=5000,
-                threads=8,
-                channel_timeout=60
-            )
-        else:
-            logger.info("Starting development server")
-            app.run(debug=False, threaded=True)
-    finally:
+    # Initialize database before first request
+    init_database()
+    
+    # Get port from environment variable or use default
+    port = int(os.environ.get("PORT", 5000))
+    
+    if os.environ.get('FLASK_ENV') == 'production':
+        from waitress import serve
+        logger.info(f"Starting production server on 0.0.0.0:{port}")
+        serve(
+            app,
+            host='0.0.0.0',
+            port=port,
+            threads=8,
+            channel_timeout=60
+        )
+    else:
+        logger.info(f"Starting development server on 0.0.0.0:{port}")
+        app.run(host='0.0.0.0', port=port, debug=False)
+    
+    # Export data when server stops (development only)
+    if os.environ.get('FLASK_ENV') != 'production':
         export_data()
