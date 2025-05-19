@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You!</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            color: #333;
+        }
+        
+        body::before {
+            content: "";
+            background: url('{{ url_for("static", filename="pexels_images/bg_image.jpg") }}') no-repeat center center;
+            background-size: cover;
+            filter: blur(8px);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+        
+        .thank-you-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2e8b57;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #2e8b57;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background-color: #3cb371;
+        }
+        
+        .feedback-count {
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+        
+        .contact {
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="thank-you-container">
+        <h1>Thank You for Participating!</h1>
+        <p>Your feedback has been successfully recorded and will contribute to our research on aesthetic preferences.</p>
+        
+        {% if feedback_count %}
+        <div class="feedback-count">
+            You rated <strong>{{ feedback_count }}</strong> images in this session.
+        </div>
+        {% endif %}
+        
+        <a href="{{ url_for('index') }}" class="btn">Return to Home</a>
+        
+        <div class="contact">
+            <p>Questions about this study? <a href="mailto:research@example.com">Contact our team</a></p>
+        </div>
+    </div>
+</body>
+</html>

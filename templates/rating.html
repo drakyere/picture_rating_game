@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate the Images</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+       body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .rating-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .rating-header h1 {
+            color: #2e8b57;
+            margin-bottom: 10px;
+        }
+        .image-container {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .rating-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 70vh;
+            display: block;
+            margin: 0 auto 15px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+        select {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin: 10px auto;
+            background-color: #f8f9fa;
+        }
+        button[type="submit"] {
+            background-color: #2e8b57;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 30px;
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #3cb371;
+        }
+        .rating-scale {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            padding: 20px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="rating-header">
+        <!-- <h1>Please rate each image based on how aesthetically pleasing you find it</h1> -->
+        <p>Please rate each image based on how aesthetically pleasing you find it.</p>
+    </div>
+
+    <div class="rating-scale">
+        <p><strong>Rating Scale:</strong></p>
+        <p>1 (Not at all beautiful) to 7 (Extremely beautiful)</p>
+    </div>
+
+    {% if not images %}
+        <div class="error-message">
+            No images available for rating. Please try again later.
+        </div>
+    {% else %}
+        <form action="{{ url_for('submit') }}" method="POST" id="ratingForm">
+            {% for image in images %}
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='Available_Dataset/' + image) }}" 
+                     alt="Image {{ loop.index }}" 
+                     loading="lazy">
+                <label for="rating_{{ image }}">Your rating:</label>
+                <select name="rating_{{ image }}" id="rating_{{ image }}" required>
+                    <option value="" disabled selected>Select rating</option>
+                    <option value="1">1 - Not beautiful</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4 - Neutral</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7 - Extremely beautiful</option>
+                </select>
+            </div>
+            {% endfor %}
+            
+            <input type="hidden" name="age" value="{{ age }}">
+            <input type="hidden" name="gender" value="{{ gender }}">
+            <button type="submit">Submit Ratings</button>
+        </form>
+    {% endif %}
+
+    <script>
+        document.getElementById('ratingForm').addEventListener('submit', function(e) {
+            const selects = this.querySelectorAll('select');
+            let allRated = true;
+            
+            selects.forEach(select => {
+                if (!select.value) {
+                    select.style.borderColor = 'red';
+                    allRated = false;
+                } else {
+                    select.style.borderColor = '';
+                }
+            });
+            
+            if (!allRated) {
+                e.preventDefault();
+                alert('Please rate all images before submitting.');
+            }
+        });
+    </script>
+</body>
+</html>
