@@ -144,7 +144,7 @@ def rating():
         logger.error(f"Error in rating route: {str(e)}")
         return render_template('error.html', message="An error occurred"), 500
 
-@app.route('/submit', methods=['POST'])
+@app.route('/submit', methods=['GET','POST'])
 def submit():
     try:
         logger.info(f"Received submission: {request.form}")
