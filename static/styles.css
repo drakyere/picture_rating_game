@@ -1,0 +1,114 @@
+/* Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* Header Styles */
+h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+p.subtitle {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+/* Image Container */
+.image-container {
+    margin: 25px;
+    display: inline-block;
+    vertical-align: top;
+    width: 250px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Image Styles */
+img {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    object-fit: contain;
+}
+
+/* Rating Selector */
+select {
+    display: block;
+    margin: 10px auto 0;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    width: 80%;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+}
+
+/* Button Styles */
+button[type="submit"] {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .image-container {
+        width: 100%;
+        margin: 15px 0;
+        max-width: 300px;
+    }
+    
+    select {
+        width: 100%;
+    }
+}
+
+/* Rating Scale Legend */
+.rating-scale {
+    background-color: #f1f5f9;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.rating-scale p {
+    margin: 5px 0;
+    font-size: 14px;
+}
